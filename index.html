@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D旋转相册</title>
+    <style>
+        /* 设置页面背景颜色 */
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        /* 相册容器样式 */
+        .album {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate 10s infinite linear;
+        }
+
+        /* 定义旋转动画 */
+        @keyframes rotate {
+            0% {
+                transform: rotateY(0deg);
+            }
+            100% {
+                transform: rotateY(360deg);
+            }
+        }
+
+        /* 照片样式 */
+        .photo {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* 定义每张照片的位置和旋转角度 */
+        .photo:nth-child(1) {
+            transform: rotateY(0deg) translateZ(300px);
+        }
+
+        .photo:nth-child(2) {
+            transform: rotateY(60deg) translateZ(300px);
+        }
+
+        .photo:nth-child(3) {
+            transform: rotateY(120deg) translateZ(300px);
+        }
+
+        .photo:nth-child(4) {
+            transform: rotateY(180deg) translateZ(300px);
+        }
+
+        .photo:nth-child(5) {
+            transform: rotateY(240deg) translateZ(300px);
+        }
+
+        .photo:nth-child(6) {
+            transform: rotateY(300deg) translateZ(300px);
+        }
+
+        /* 工具栏样式 */
+        .toolbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(51, 51, 51, 0.9);
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 工具栏按钮样式 */
+        .toolbar button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        .toolbar button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 隐藏的文件输入框 */
+        .hidden-input {
+            display: none;
+        }
+
+        /* 图标样式 */
+        .icon {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+
+        /* 调整照片大小输入框样式 */
+        .size-input {
+            width: 60px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <!-- 相册容器 -->
+    <div class="album">
+        <div class="photo"></div>
+        <div class="photo"></div>
+        <div class="photo"></div>
+        <div class="photo"></div>
+        <div class="photo"></div>
+        <div class="photo"></div>
+    </div>
+
+    <!-- 工具栏 -->
+    <div class="toolbar">
+        <!-- 上传图片 -->
+        <button onclick="document.getElementById('image-input').click()">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M19 13v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5m5-3h6v6m-6-6l6 6m-6-6V1h6v6m-6 3h6m-6 3h6m-6 3h6"/>
+            </svg>
+            上传图片
+        </button>
+        <input type="file" id="image-input" accept="image/*" multiple class="hidden-input">
+
+        <!-- 上传背景音乐 -->
+        <button onclick="document.getElementById('music-input').click()">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M3 18v-6h2v6H3zm4 0v-6h2v6H7zm4 0v-6h2v6h-2zm4 0v-6h2v6h-2zm4 0v-6h2v6h-2zM5 12V6l7-3v3l7 3v6H5z"/>
+            </svg>
+            上传音乐
+        </button>
+        <input type="file" id="music-input" accept="audio/*" class="hidden-input">
+
+        <!-- 调整旋转速度 -->
+        <label for="speed">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 2a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0V7a1 1 0 0 1 1-1z"/>
+            </svg>
+            速度
+        </label>
+        <input type="range" id="speed" min="1" max="20" value="10" oninput="changeSpeed(this.value)">
+
+        <!-- 设置背景色 -->
+        <label for="bg-color">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 2a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0V7a1 1 0 0 1 1-1z"/>
+            </svg>
+            背景色
+        </label>
+        <input type="color" id="bg-color" onchange="changeBackgroundColor(this.value)">
+
+        <!-- 调整照片大小 -->
+        <label for="size-input">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M21 3h-6v2h6v6h2V3h-2zm0 18h-6v2h8v-8h-2v6zM3 3h6v2H3v6H1V3h2zm0 18h6v2H1v-8h2v6z"/>
+            </svg>
+            照片大小
+        </label>
+        <input type="number" id="size-input" class="size-input" min="100" max="500" value="200" oninput="changePhotoSize(this.value)">
+    </div>
+
+    <script>
+        // 获取文件输入框和相册容器
+        const imageInput = document.getElementById('image-input');
+        const musicInput = document.getElementById('music-input');
+        const photos = document.querySelectorAll('.photo');
+        const album = document.querySelector('.album');
+        const sizeInput = document.getElementById('size-input');
+        let audioElement = null;
+
+        // 监听图片上传事件
+        imageInput.addEventListener('change', function (event) {
+            const files = event.target.files;
+
+            // 确保用户上传了6张照片
+            if (files.length !== 6) {
+                alert('请上传6张照片！');
+                return;
+            }
+
+            // 为每张照片设置背景图片
+            Array.from(files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    photos[index].style.backgroundImage = `url(${e.target.result})`;
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // 监听背景音乐上传事件
+        musicInput.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // 如果已有音乐，先移除
+            if (audioElement) {
+                audioElement.pause();
+                audioElement.remove();
+            }
+
+            // 创建新的音频元素并播放
+            audioElement = new Audio(URL.createObjectURL(file));
+            audioElement.loop = true;
+            audioElement.play();
+        });
+
+        // 调整旋转速度
+        function changeSpeed(speed) {
+            album.style.animationDuration = `${speed}s`;
+        }
+
+        // 设置背景色
+        function changeBackgroundColor(color) {
+            document.body.style.backgroundColor = color;
+        }
+
+        // 调整照片大小
+        function changePhotoSize(size) {
+            photos.forEach(photo => {
+                photo.style.width = `${size}px`;
+                photo.style.height = `${size}px`;
+            });
+        }
+    </script>
+</body>
+</html>
