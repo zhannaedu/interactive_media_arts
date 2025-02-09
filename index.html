@@ -88,7 +88,7 @@
 
         /* 工具栏按钮样式 */
         .toolbar button {
-            padding: 8px 16px;
+            padding: 8px;
             background-color: #007bff;
             color: white;
             border: none;
@@ -96,7 +96,7 @@
             border-radius: 5px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
             font-size: 14px;
         }
 
@@ -111,12 +111,12 @@
 
         /* 图标样式 */
         .icon {
-            width: 16px;
-            height: 16px;
+            width: 24px;
+            height: 24px;
             fill: white;
         }
 
-        /* 调整照片大小输入框样式 */
+        /* 输入框样式 */
         .size-input {
             width: 60px;
             padding: 5px;
@@ -141,47 +141,43 @@
         <!-- 上传图片 -->
         <button onclick="document.getElementById('image-input').click()">
             <svg class="icon" viewBox="0 0 24 24">
-                <path d="M19 13v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5m5-3h6v6m-6-6l6 6m-6-6V1h6v6m-6 3h6m-6 3h6m-6 3h6"/>
+                <path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v4H8V8zm0 6h3v2H8v-2zm5 0h3v2h-3v-2zm-5 4h8v2H8v-2z"/>
             </svg>
-            上传图片
         </button>
         <input type="file" id="image-input" accept="image/*" multiple class="hidden-input">
 
         <!-- 上传背景音乐 -->
         <button onclick="document.getElementById('music-input').click()">
             <svg class="icon" viewBox="0 0 24 24">
-                <path d="M3 18v-6h2v6H3zm4 0v-6h2v6H7zm4 0v-6h2v6h-2zm4 0v-6h2v6h-2zm4 0v-6h2v6h-2zM5 12V6l7-3v3l7 3v6H5z"/>
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
             </svg>
-            上传音乐
         </button>
         <input type="file" id="music-input" accept="audio/*" class="hidden-input">
 
         <!-- 调整旋转速度 -->
-        <label for="speed">
+        <button>
             <svg class="icon" viewBox="0 0 24 24">
                 <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 2a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0V7a1 1 0 0 1 1-1z"/>
             </svg>
-            速度
-        </label>
-        <input type="range" id="speed" min="1" max="20" value="10" oninput="changeSpeed(this.value)">
+        </button>
+        <input type="range" id="speed" min="1" max="20" value="10" oninput="changeSpeed(this.value)" style="width: 100px;">
 
         <!-- 设置背景色 -->
-        <label for="bg-color">
+        <button>
             <svg class="icon" viewBox="0 0 24 24">
                 <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 2a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0V7a1 1 0 0 1 1-1z"/>
             </svg>
-            背景色
-        </label>
-        <input type="color" id="bg-color" onchange="changeBackgroundColor(this.value)">
+        </button>
+        <input type="color" id="bg-color" onchange="changeBackgroundColor(this.value)" style="width: 30px; height: 30px;">
 
-        <!-- 调整照片大小 -->
-        <label for="size-input">
+        <!-- 调整图片长度和宽度 -->
+        <button>
             <svg class="icon" viewBox="0 0 24 24">
                 <path d="M21 3h-6v2h6v6h2V3h-2zm0 18h-6v2h8v-8h-2v6zM3 3h6v2H3v6H1V3h2zm0 18h6v2H1v-8h2v6z"/>
             </svg>
-            照片大小
-        </label>
-        <input type="number" id="size-input" class="size-input" min="100" max="500" value="200" oninput="changePhotoSize(this.value)">
+        </button>
+        <input type="number" id="width-input" class="size-input" min="100" max="500" value="200" placeholder="宽度" oninput="changePhotoSize()">
+        <input type="number" id="height-input" class="size-input" min="100" max="500" value="200" placeholder="高度" oninput="changePhotoSize()">
     </div>
 
     <script>
@@ -190,7 +186,8 @@
         const musicInput = document.getElementById('music-input');
         const photos = document.querySelectorAll('.photo');
         const album = document.querySelector('.album');
-        const sizeInput = document.getElementById('size-input');
+        const widthInput = document.getElementById('width-input');
+        const heightInput = document.getElementById('height-input');
         let audioElement = null;
 
         // 监听图片上传事件
@@ -232,7 +229,8 @@
 
         // 调整旋转速度
         function changeSpeed(speed) {
-            album.style.animationDuration = `${speed}s`;
+            // 将滑杆值转换为动画持续时间，滑杆值越小，持续时间越长（速度越慢）
+            album.style.animationDuration = `${21 - speed}s`;
         }
 
         // 设置背景色
@@ -240,13 +238,24 @@
             document.body.style.backgroundColor = color;
         }
 
-        // 调整照片大小
-        function changePhotoSize(size) {
+        // 调整图片大小
+        function changePhotoSize() {
+            const width = widthInput.value;
+            const height = heightInput.value;
             photos.forEach(photo => {
-                photo.style.width = `${size}px`;
-                photo.style.height = `${size}px`;
+                photo.style.width = `${width}px`;
+                photo.style.height = `${height}px`;
             });
         }
+
+        // 鼠标悬停时停止旋转，离开时继续旋转
+        album.addEventListener('mouseenter', () => {
+            album.style.animationPlayState = 'paused';
+        });
+
+        album.addEventListener('mouseleave', () => {
+            album.style.animationPlayState = 'running';
+        });
     </script>
 </body>
 </html>
